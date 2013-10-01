@@ -1,0 +1,6 @@
+"interrupt.obj",
+"io.obj",
+"serial.obj",
+"System.obj",
+"app.obj" 
+TO "Firealarm" 

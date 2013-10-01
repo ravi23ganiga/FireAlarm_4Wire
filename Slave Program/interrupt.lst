@@ -1,0 +1,178 @@
+C51 COMPILER V8.05a   INTERRUPT                                                            09/23/2013 20:48:50 PAGE 1   
+
+
+C51 COMPILER V8.05a, COMPILATION OF MODULE INTERRUPT
+OBJECT MODULE PLACED IN interrupt.obj
+COMPILER INVOKED BY: D:\Keil\C51\BIN\C51.EXE board\src\interrupt.c BROWSE INCDIR(.\include) DEBUG OBJECTEXTEND PRINT(.\i
+                    -nterrupt.lst) OBJECT(interrupt.obj)
+
+line level    source
+
+   1          #include "global.h"
+   2          
+   3          void InterruptInit()
+   4          {
+   5   1              //Basic interrupt configuration 
+   6   1              IE              = 0x00;
+   7   1              //Timer interrupt configuration
+   8   1              TMOD    = 0x21;
+   9   1              //Timer0 as 1msec configuration
+  10   1              TR0     = FALSE;
+  11   1              TH0     = 0xFC;
+  12   1              TL0     = 0x66;
+  13   1              //Timer 1 as 9600 baud rate generator
+  14   1              TR1     = FALSE;
+  15   1              TH1     = 0xFD;
+  16   1              TL1     = 0xFD;
+  17   1              IT0 = 1;
+  18   1              IT1 = 1; 
+  19   1              IP = 0x05;
+  20   1              IE = 0x97;                 
+  21   1      } 
+  22          
+  23          void msecInterruptStart()
+  24          {
+  25   1              TR0 = TRUE;
+  26   1      }
+  27          void msecInterruptStop()
+  28          {
+  29   1              TR0 = FALSE;
+  30   1      }
+  31          
+  32          void SerialInterrupt() interrupt 4
+  33          {
+  34   1              UC ucmData;
+  35   1              msecInterruptStart();
+  36   1              if(TI EQ TRUE)
+  37   1              {
+  38   2                      //Transmission Interrupt 
+  39   2                      if(System.Serial.ucmTxLength NEQ 0)
+  40   2                      {
+  41   3                              ucmData = VALUE_AT_ADDRESS(System.Serial.ucpDataPtr);
+  42   3                              System.Serial.ucpDataPtr++;
+  43   3                              System.Serial.ucmTxLength--;
+  44   3                              SBUF = ucmData; 
+  45   3                      }
+  46   2                      else
+  47   2                      {
+  48   3                              System.Serial.enTxComplete = COMPLETE;
+  49   3                              //if(System.Serial.fnTxFunc NEQ NULL)
+  50   3                              //{
+  51   3                              //      System.Serial.fnTxFunc(System.Serial.vTxData);
+  52   3                              //}
+  53   3                      }
+  54   2                      TI = FALSE;
+C51 COMPILER V8.05a   INTERRUPT                                                            09/23/2013 20:48:50 PAGE 2   
+
+  55   2              }
+  56   1              else
+  57   1              {
+  58   2                      //Receiver Interrupt   
+  59   2                      if(System.Serial.enRxStatus EQ RX_ADDRESS)
+  60   2                      { 
+  61   3                              ucmData = SBUF; 
+  62   3                              if((ucmData EQ  System.AppStruct.ucmSysAddr) OR (ucmData EQ      BROADCAST_ADDR))
+  63   3                              {
+  64   4                                      SM2 = FALSE;
+  65   4                                      System.Serial.ucmRxNdx = 0;
+  66   4                              //      System.AppStruct.bitPowerDown = FALSE;
+  67   4                                      System.Serial.enRxStatus = RX_MONITORING;
+  68   4                              }
+  69   3                      }
+  70   2                      else if( ( System.Serial.enRxStatus EQ RX_MONITORING ) OR ( System.Serial.enRxStatus EQ RX_STARTED ) )
+  71   2                      { 
+  72   3                              System.Serial.usmRxTimeout = RECEPTION_TIMEOUT;//100msec
+  73   3                              System.Serial.enRxStatus = RX_STARTED;
+  74   3                              
+  75   3                              if(System.Serial.ucmRxNdx NEQ (System.Serial.ucmRxLength - 1))
+  76   3                              {
+  77   4                                      System.Serial.ucpRxBuff[System.Serial.ucmRxNdx] = SBUF;    
+  78   4                                      System.Serial.ucmRxNdx++;
+  79   4                              }
+  80   3                      }
+  81   2                      RI = FALSE;
+  82   2              }
+  83   1      }
+  84          
+  85          //1 msec interrupt 
+  86          void TimerInterrupt() interrupt 1
+  87          {
+  88   1              TR0 = FALSE;
+  89   1              //1msec timer interrupt
+  90   1              //----------------------
+  91   1              if(System.AppStruct.usmDelay GT 0)
+  92   1              {
+  93   2                      System.AppStruct.usmDelay--;
+  94   2              }
+  95   1               //Serial Reception Status
+  96   1               if(System.Serial.enRxStatus EQ RX_STARTED)
+  97   1               {
+  98   2                         if(System.Serial.usmRxTimeout NEQ 0)
+  99   2                         {
+ 100   3                                      System.Serial.usmRxTimeout--;
+ 101   3                                      if(System.Serial.usmRxTimeout EQ 0)
+ 102   3                                      { 
+ 103   4                                              System.Serial.enRxStatus = RX_COMPLETED;
+ 104   4                                              SM2 = TRUE;
+ 105   4                                              REN = FALSE; 
+ 106   4                                      }
+ 107   3                         }
+ 108   2                }
+ 109   1      
+ 110   1      /*        if(System.Serial.enRxStatus EQ RX_MONITORING)
+ 111   1                {
+ 112   1                      if(System.Serial.usmRxWaitTimeout NEQ 0)
+ 113   1                      {
+ 114   1                              System.Serial.usmRxWaitTimeout--;
+ 115   1                              if(System.Serial.usmRxWaitTimeout EQ 0)
+ 116   1                              {
+C51 COMPILER V8.05a   INTERRUPT                                                            09/23/2013 20:48:50 PAGE 3   
+
+ 117   1                                      System.Serial.enRxStatus = RX_TIMEOUT;
+ 118   1                                      REN = FALSE; 
+ 119   1                              }
+ 120   1                      }
+ 121   1                }*/
+ 122   1               //-----------------------
+ 123   1              //-----------------------
+ 124   1              TH0 = 0xFC;
+ 125   1              TL0 = 0x66;
+ 126   1              TR0 = TRUE;
+ 127   1      }
+ 128          
+ 129          //Fire switch interrupt
+ 130          //make power down bit false
+ 131          void ExternalInterrupt0() interrupt 0
+ 132          {
+ 133   1              Delay(100);
+ 134   1              if(FIRE_SWITCH EQ FALSE)
+ 135   1              {
+ 136   2                      FireUpdateSystem();
+ 137   2              }
+ 138   1      }
+ 139          
+ 140          
+ 141          //Fire Sensor  interrupt
+ 142          //make power down bit false
+ 143          void ExternalInterrupt1() interrupt 2
+ 144          {
+ 145   1              Delay(100);
+ 146   1              if(FIRE_SENSOR EQ FALSE)
+ 147   1              {
+ 148   2                      FireUpdateSystem();
+ 149   2              }
+ 150   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    403    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

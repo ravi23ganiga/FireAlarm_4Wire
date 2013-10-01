@@ -1,0 +1,11 @@
+Four Wire Fire Alarm Project
+----------------------------
+
+Project Description: This is the project which is designed for protecting the buildings against fire
+			It is a alarm system to avoid the fire. There is base board and Floor board
+			for each floor.
+
+Files		:Program Folder: Base Board Program
+		 Slave Program Folder : Floor board Program
+		Schematics : Base and Floor Board Schematics
+		Simulation: Simulation for the system

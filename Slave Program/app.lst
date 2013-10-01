@@ -1,0 +1,141 @@
+C51 COMPILER V8.05a   APP                                                                  09/23/2013 20:48:50 PAGE 1   
+
+
+C51 COMPILER V8.05a, COMPILATION OF MODULE APP
+OBJECT MODULE PLACED IN app.obj
+COMPILER INVOKED BY: D:\Keil\C51\BIN\C51.EXE application\app.c BROWSE INCDIR(.\include) DEBUG OBJECTEXTEND PRINT(.\app.l
+                    -st) OBJECT(app.obj)
+
+line level    source
+
+   1          #include "global.h" 
+   2          
+   3          UC ucmTest;
+   4          /*
+   5                  Pendingwork
+   6                  //Reset query
+   7                  //Delay
+   8                  //Registration from 0 to 60 consider the delay of this routine
+   9          */
+  10          
+  11          //......................
+  12          //Put Sensor Check
+  13          //.......................
+  14          void AppStart(void)
+  15          {                  
+  16   1              AppInit();  
+  17   1      
+  18   1              APP_START
+  19   1              {
+  20   2                      if(System.AppStruct.bitPowerDown EQ TRUE)
+  21   2                      {
+  22   3                              PowerDownSystem();
+  23   3                      }
+  24   2                      if(System.Serial.enRxStatus NEQ RX_ADDRESS)
+  25   2                      {
+  26   3                              while(System.Serial.enRxStatus  NEQ RX_COMPLETED);//#chk may get in infinite ,loop due to timeout       
+  27   3                              System.Serial.enRxStatus = RX_ADDRESS; 
+  28   3                              PrepareAndSendResponse(); 
+  29   3                              REN = TRUE; 
+  30   3                      }
+  31   2              }
+  32   1      }
+  33          
+  34          void AppInit()
+  35          {
+  36   1              System.AppStruct.ucmSysAddr = NO_SWITCH & 0x3F;
+  37   1              System.AppStruct.bitPowerDown = TRUE;
+  38   1      }
+  39          
+  40          void ResetSystem()
+  41          {
+  42   1              FIRE_RELAY = 0;
+  43   1              FIRE_LED = 0; 
+  44   1              System.AppStruct.bitSysUpdate = FALSE;
+  45   1              System.AppStruct.bitFire = FALSE;
+  46   1              System.AppStruct.ucmSysAddr = NO_SWITCH & 0xCF;
+  47   1      }
+  48          
+  49          void PowerDownSystem()
+  50          {
+  51   1              msecInterruptStop();
+  52   1              PCON = 0x01;
+  53   1      } 
+  54          
+C51 COMPILER V8.05a   APP                                                                  09/23/2013 20:48:50 PAGE 2   
+
+  55          void PrepareAndSendResponse() 
+  56          {
+  57   1              MAX485_TX  = TRANSMIT;
+  58   1                  
+  59   1              switch(System.QueryStruct.ucmQueryType)
+  60   1              {
+  61   2                      case REGISTRATION_QUERY:     
+  62   2                              SendResponse();
+  63   2                              while(System.Serial.enTxComplete NEQ COMPLETE);  
+  64   2                              break;
+  65   2      
+  66   2                      case RESET_QUERY: 
+  67   2                              ResetSystem();
+  68   2                              break;
+  69   2      
+  70   2                      case ACCEPT_QUERY:
+  71   2                              FIRE_RELAY = FALSE;
+  72   2                              break;
+  73   2      
+  74   2                      case CALL_ALL_QUERY:
+  75   2                              FireUpdateSystem();
+  76   2                              break;
+  77   2      
+  78   2                      case FIRE_QUERY:
+  79   2                              FireUpdateSystem();
+  80   2                              break;
+  81   2      
+  82   2                      case FIRE_TEST_QUERY: 
+  83   2                              if(System.AppStruct.bitFire EQ TRUE)
+  84   2                              {
+  85   3                                      System.QueryStruct.ucmQueryData  = FIRE_RESPONSE;
+  86   3                              }
+  87   2                              else
+  88   2                              {
+  89   3                                      System.QueryStruct.ucmQueryData = 0x00; 
+  90   3                              }
+  91   2                              SendResponse();
+  92   2                              while(System.Serial.enTxComplete NEQ COMPLETE);
+  93   2                              break;
+  94   2      
+  95   2                      default:
+  96   2                              break;
+  97   2              }
+  98   1              MAX485_TX = RECEIVE;
+  99   1      }
+ 100          
+ 101          void FireUpdateSystem()
+ 102          {
+ 103   1              //if(System.AppStruct.bitFire NEQ TRUE)
+ 104   1              //{
+ 105   1              //      if(System.AppStruct.bitSysUpdate NEQ TRUE)
+ 106   1              //      {
+ 107   1                              System.AppStruct.bitFire =  TRUE;
+ 108   1                              System.AppStruct.bitSysUpdate = TRUE;
+ 109   1                              FIRE_LED = TRUE;
+ 110   1                              FIRE_RELAY = TRUE;      
+ 111   1              //      }
+ 112   1              //}
+ 113   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+C51 COMPILER V8.05a   APP                                                                  09/23/2013 20:48:50 PAGE 3   
+
+   CODE SIZE        =    165    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      1    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

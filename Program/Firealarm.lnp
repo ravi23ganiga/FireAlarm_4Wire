@@ -1,0 +1,8 @@
+"interrupt.obj",
+"io.obj",
+"serial.obj",
+"System.obj",
+"app.obj",
+"keypad.obj" 
+TO "Firealarm" 
+RAMSIZE(256) 

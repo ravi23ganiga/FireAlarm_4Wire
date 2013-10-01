@@ -1,0 +1,326 @@
+C51 COMPILER V8.05a   APP                                                                  09/22/2013 14:06:16 PAGE 1   
+
+
+C51 COMPILER V8.05a, COMPILATION OF MODULE APP
+OBJECT MODULE PLACED IN app.obj
+COMPILER INVOKED BY: D:\Keil\C51\BIN\C51.EXE application\app.c BROWSE INCDIR(.\include) DEBUG OBJECTEXTEND PRINT(.\app.l
+                    -st) OBJECT(app.obj)
+
+line level    source
+
+   1          #include "global.h" 
+   2          //#chk pend: Final Release
+   3          
+   4          /*...........----------------------------............
+   5            #chk pend list         
+   6             2. 7 Seg Display implementation
+   7                  Requirement: There should always be a floor that should be numbered floor no 1 
+   8          *///..........----------------------------............
+   9          
+  10          /*
+  11                  Pendingwork       
+  12          */
+  13          
+  14          void AppStart(void)
+  15          { 
+  16   1              AppInit();       
+  17   1              ResetSystem();   
+  18   1              StartRegistration();  //#chk check for maximum registration
+  19   1              SYSTEM_START = TRUE;     
+  20   1              APP_START
+  21   1              {
+  22   2                      KeypadCheck();  
+  23   2                      QuerySend();
+  24   2                      ResponseCheck();  
+  25   2                      Test();    
+  26   2              }
+  27   1      }
+  28          
+  29          void AppInit()
+  30          {                                                                   
+  31   1              System.QueryStruct.ucmQueryData = 0xFF;  
+  32   1      }
+  33          
+  34          void ResetSystem()
+  35          {
+  36   1              Delay(1000);              //#chk test the timing due to heavy delay
+  37   1              System.Serial.ucmQueryAddress   = BROADCAST_ADDR;
+  38   1              System.QueryStruct.ucmQueryType = RESET_QUERY; 
+  39   1              SendQuery();
+  40   1              while(System.Serial.enTxComplete NEQ COMPLETE);
+  41   1              Delay(100);                       //#chk test the timing
+  42   1      }
+  43          
+  44          //Registration of the floor
+  45          //-------------------------
+  46          
+  47          
+  48          //............................
+  49          //#chk pend:    Consider the delay of this routine
+  50          //#chk pend:    Validate the received response  
+  51          //............................
+  52          void StartRegistration()
+  53          {
+  54   1              UC ucmFloorNo = 0;
+C51 COMPILER V8.05a   APP                                                                  09/22/2013 14:06:16 PAGE 2   
+
+  55   1              UC ucmTestVal = FALSE;
+  56   1      
+  57   1              System.Serial.ucmQueryAddress = 0x00;
+  58   1              System.QueryStruct.ucmQueryType = REGISTRATION_QUERY;
+  59   1              System.QueryStruct.ucmQueryData = 0xFF;
+  60   1              while(ucmFloorNo < MAX_FLOOR)
+  61   1              {
+  62   2                      System.Serial.ucmQueryAddress++;
+  63   2                      SendQuery();     
+  64   2                      while(System.Serial.enTxComplete NEQ COMPLETE);            
+  65   2                      ReceiveResponse();          
+  66   2                      while(ucmTestVal NEQ TRUE)
+  67   2                      {
+  68   3                              if(System.Serial.enRxStatus EQ RX_COMPLETED)
+  69   3                              {
+  70   4                                      //vallidate the received response  
+  71   4                                      RegisterFloor(ucmFloorNo); 
+  72   4                                      ucmTestVal = TRUE;      
+  73   4                              }
+  74   3                              else if(System.Serial.enRxStatus EQ RX_TIMEOUT)
+  75   3                              {
+  76   4                                      ucmTestVal = TRUE;
+  77   4                              }
+  78   3                      } 
+  79   2                      ucmTestVal = FALSE; 
+  80   2                      ucmFloorNo++;
+  81   2              }               
+  82   1      }
+  83          
+  84          void RegisterFloor(UC ucmFloorNo)
+  85          {
+  86   1              UC ucmFloorArrayIndex, ucmFloorBit; 
+  87   1              ucmFloorArrayIndex = (ucmFloorNo / 8);
+  88   1              ucmFloorBit = (ucmFloorNo % 8);
+  89   1              System.AppStruct.ucmRegistration[ucmFloorArrayIndex] |= (1 << ucmFloorBit);
+  90   1      }
+  91          
+  92          UC IsFloorRegistered(UC ucmFloorNo)
+  93          {
+  94   1              UC ucmFloorArrayIndex, ucmFloorBit;
+  95   1              if(ucmFloorNo LTE 0)
+  96   1              {
+  97   2                      return FALSE;
+  98   2              }
+  99   1              ucmFloorNo--;
+ 100   1              ucmFloorArrayIndex = (ucmFloorNo / 8);
+ 101   1              ucmFloorBit = (ucmFloorNo % 8);
+ 102   1              if((System.AppStruct.ucmRegistration[ucmFloorArrayIndex]) & (1 << ucmFloorBit))
+ 103   1              { 
+ 104   2                      return TRUE;    
+ 105   2              }       
+ 106   1              else
+ 107   1              {
+ 108   2                      return FALSE;
+ 109   2              }
+ 110   1      }
+ 111          
+ 112          /*
+ 113            There should always be a floor that should be numbered floor 1        
+ 114          */
+ 115          
+ 116          UC NextRegisteredFloor(UC ucmFloorNo)
+C51 COMPILER V8.05a   APP                                                                  09/22/2013 14:06:16 PAGE 3   
+
+ 117          { 
+ 118   1              ucmFloorNo++;
+ 119   1              while(ucmFloorNo LTE MAX_FLOOR)
+ 120   1              {
+ 121   2                      if(IsFloorRegistered(ucmFloorNo))
+ 122   2                      {
+ 123   3                              return ucmFloorNo;
+ 124   3                      }       
+ 125   2                      ucmFloorNo++;
+ 126   2              }
+ 127   1              ucmFloorNo = 1; 
+ 128   1              return ucmFloorNo;
+ 129   1      }
+ 130          
+ 131          //------------------------------
+ 132          
+ 133          /*
+ 134            Pending works
+ 135            #chk pend: 1. Clear all implementation 
+ 136          */
+ 137          
+ 138          void KeypadCheck()
+ 139          {
+ 140   1              TagenKeyType curKey = NOKEY;
+ 141   1              UC ucmRetVal;
+ 142   1              if(System.AppStruct.KeyStruct.bitNumLock EQ UNLOCKED)
+ 143   1              {
+ 144   2                      curKey = KeyScan();      
+ 145   2                      if( ( (curKey GTE ONE) AND (curKey LTE NINE) ) OR (curKey EQ ZERO) )
+ 146   2                      { 
+ 147   3                              System.AppStruct.KeyStruct.ucmKeyCounter++;                 
+ 148   3                              if(System.AppStruct.KeyStruct.ucmKeyCounter GTE KEY_COUNTER_MAX)
+ 149   3                              {
+ 150   4                                      System.AppStruct.KeyStruct.ucmKeyValue = 0;
+ 151   4                                      System.AppStruct.KeyStruct.ucmKeyCounter = 1;                           
+ 152   4                              }
+ 153   3                              System.AppStruct.KeyStruct.ucmKeyValue *= 10;
+ 154   3                              if(curKey NEQ ZERO)
+ 155   3                              {
+ 156   4                                      System.AppStruct.KeyStruct.ucmKeyValue += (curKey + 1);
+ 157   4                              }          
+ 158   3                      }
+ 159   2                      else
+ 160   2                      { 
+ 161   3                              if( curKey EQ ENTER )
+ 162   3                              {
+ 163   4                                      if(System.AppStruct.KeyStruct.ucmKeyCounter LTE COUNTER_VALID_ADDR)
+ 164   4                                      { 
+ 165   5                                              ucmRetVal = IsFloorRegistered(System.AppStruct.KeyStruct.ucmKeyValue);
+ 166   5                                              if(ucmRetVal EQ TRUE)
+ 167   5                                              {  
+ 168   6                                                      System.QueryStruct.ucmQueryType                 = FIRE_QUERY;
+ 169   6                                                      System.Serial.ucmQueryAddress                   = System.AppStruct.KeyStruct.ucmKeyValue; 
+ 170   6                                                      UpdateSystem(FIRE_UPDATE);
+ 171   6                                                      System.AppStruct.KeyStruct.bitNumLock   = LOCKED;
+ 172   6                                              } 
+ 173   5                                      } 
+ 174   4                                      System.AppStruct.KeyStruct.ucmKeyCounter = 0;
+ 175   4                                      System.AppStruct.KeyStruct.ucmKeyValue = 0; 
+ 176   4                              }
+ 177   3                              else if( curKey EQ CALLALL)
+ 178   3                              { 
+C51 COMPILER V8.05a   APP                                                                  09/22/2013 14:06:16 PAGE 4   
+
+ 179   4                                      System.QueryStruct.ucmQueryType                         = CALL_ALL_QUERY;
+ 180   4                                      System.Serial.ucmQueryAddress                           = BROADCAST_ADDR;
+ 181   4                                      System.AppStruct.KeyStruct.bitNumLock           = LOCKED; 
+ 182   4                                      UpdateSystem(FIRE_UPDATE);
+ 183   4                                      System.AppStruct.KeyStruct.ucmKeyCounter        = 0;
+ 184   4                                      System.AppStruct.KeyStruct.ucmKeyValue          = 0;
+ 185   4                              }
+ 186   3              
+ 187   3                              else if(curKey EQ ACCEPT)
+ 188   3                              {
+ 189   4                                      //#chk accept not to be done for broadcast addr                                 
+ 190   4                                      System.QueryStruct.ucmQueryType                         = ACCEPT_QUERY; 
+ 191   4                                      System.Serial.ucmQueryAddress                           = System.AppStruct.KeyStruct.ucmKeyValue;                                   
+ 192   4                                      System.AppStruct.KeyStruct.bitNumLock           = LOCKED; 
+ 193   4                                      UpdateSystem(ACCEPT_UPDATE);
+ 194   4                                      System.AppStruct.KeyStruct.ucmKeyCounter        = 0;
+ 195   4                                      System.AppStruct.KeyStruct.ucmKeyValue          = 0;
+ 196   4                              } 
+ 197   3                              //clear button
+ 198   3                      }
+ 199   2              }
+ 200   1      }
+ 201          
+ 202          void UpdateKeyVar()
+ 203          { 
+ 204   1              System.AppStruct.KeyStruct.bitNumLock           = UNLOCKED;
+ 205   1      }
+ 206          
+ 207           /*
+ 208           */
+ 209          void QuerySend()
+ 210          {
+ 211   1              if( System.Serial.enTxComplete EQ COMPLETE )
+ 212   1              {
+ 213   2                      if(System.AppStruct.bitResponseSemaphore EQ UNLOCKED)
+ 214   2                      {
+ 215   3                              if( System.AppStruct.KeyStruct.bitNumLock EQ  LOCKED ) 
+ 216   3                              {                          
+ 217   4                                      switch(System.QueryStruct.ucmQueryType)
+ 218   4                                      { 
+ 219   5                                              case ACCEPT_QUERY:                
+ 220   5                                                      break;
+ 221   5                                      
+ 222   5                                              case CALL_ALL_QUERY:  
+ 223   5                                                      break;
+ 224   5                                      
+ 225   5                                              case FIRE_QUERY:                                                 
+ 226   5                                                      break; 
+ 227   5                      
+ 228   5                                              default:
+ 229   5                                                      break;
+ 230   5                                      }
+ 231   4                                      SendQuery();
+ 232   4                                      UpdateKeyVar();
+ 233   4                                      Delay(100); 
+ 234   4                              }        
+ 235   3                              else
+ 236   3                              {        
+ 237   4                                      System.QueryStruct.ucmQueryType                 =  FIRE_TEST_QUERY;
+ 238   4                                      System.AppStruct.ucmCurAddress                  = NextRegisteredFloor(System.AppStruct.ucmCurAddress);
+ 239   4                                      System.Serial.ucmQueryAddress                   = System.AppStruct.ucmCurAddress;
+ 240   4                                      System.AppStruct.bitResponseSemaphore   = LOCKED;
+C51 COMPILER V8.05a   APP                                                                  09/22/2013 14:06:16 PAGE 5   
+
+ 241   4                                      SendQuery();
+ 242   4                                      while (System.Serial.enTxComplete NEQ COMPLETE);
+ 243   4                                  RecData(&System.ResponseStruct.ucmStartByte,sizeof(System.ResponseStruct),FIRE_QUERY_TIMEOUT);  
+ 244   4                              } 
+ 245   3                      }
+ 246   2              }
+ 247   1      }
+ 248          
+ 249          
+ 250          
+ 251          void ResponseCheck()
+ 252          {
+ 253   1              if( ( System.AppStruct.bitResponseSemaphore EQ LOCKED )
+ 254   1                      AND (System.Serial.enTxComplete EQ COMPLETE) )
+ 255   1              {
+ 256   2                      if(System.Serial.enRxStatus EQ RX_COMPLETED)
+ 257   2                      {                  
+ 258   3                              System.AppStruct.bitResponseSemaphore = UNLOCKED;
+ 259   3                              if(System.ResponseStruct.ucmQueryData EQ FIRE_RESPONSE)
+ 260   3                              {   
+ 261   4                                      UpdateSystem(FIRE_UPDATE);
+ 262   4                              }
+ 263   3                      }
+ 264   2                      else if( System.Serial.enRxStatus EQ RX_TIMEOUT)
+ 265   2                      {
+ 266   3                              System.AppStruct.bitResponseSemaphore = UNLOCKED;   
+ 267   3                      }       
+ 268   2              }
+ 269   1      }
+ 270          
+ 271          
+ 272          //........................................................
+ 273          //........................................................ 
+ 274          void UpdateSystem(UC ucmUpdateType)
+ 275          {
+ 276   1              if(ucmUpdateType EQ FIRE_UPDATE)
+ 277   1              {
+ 278   2                      FIRE_LED        = TRUE;
+ 279   2                      FIRE_RELAY      = TRUE;         
+ 280   2              }
+ 281   1              else if(ucmUpdateType EQ ACCEPT_UPDATE)
+ 282   1              {
+ 283   2                      FIRE_LED        = TRUE;         
+ 284   2                      FIRE_RELAY      = FALSE;                 
+ 285   2              }
+ 286   1      }
+ 287          
+ 288          
+ 289          void Test()
+ 290          {
+ 291   1       
+ 292   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    548    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       3
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+C51 COMPILER V8.05a   APP                                                                  09/22/2013 14:06:16 PAGE 6   
+
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

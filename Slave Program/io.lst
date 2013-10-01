@@ -1,0 +1,39 @@
+C51 COMPILER V8.05a   IO                                                                   09/23/2013 20:48:50 PAGE 1   
+
+
+C51 COMPILER V8.05a, COMPILATION OF MODULE IO
+OBJECT MODULE PLACED IN io.obj
+COMPILER INVOKED BY: D:\Keil\C51\BIN\C51.EXE board\src\io.c BROWSE INCDIR(.\include) DEBUG OBJECTEXTEND PRINT(.\io.lst) 
+                    -OBJECT(io.obj)
+
+line level    source
+
+   1          #include "global.h"
+   2          
+   3          void IoInit()
+   4          { 
+   5   1              //Inputs
+   6   1              FIRE_SENSOR = INPUT_PIN;
+   7   1              FIRE_SWITCH     = INPUT_PIN;
+   8   1              NO_SWITCH       = INPUT_PORT;
+   9   1              
+  10   1              //Outputs       
+  11   1              FIRE_RELAY      = OUTPUT_PIN;
+  12   1              FIRE_LED        = OUTPUT_PIN;
+  13   1              
+  14   1              MAX485_TX       = OUTPUT_PIN;            
+  15   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     14    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

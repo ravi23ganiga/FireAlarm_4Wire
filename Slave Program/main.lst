@@ -1,0 +1,69 @@
+C51 COMPILER V8.05a   MAIN                                                                 08/28/2013 22:34:30 PAGE 1   
+
+
+C51 COMPILER V8.05a, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN main.obj
+COMPILER INVOKED BY: D:\Keil\C51\BIN\C51.EXE application\main.c BROWSE INCDIR(.\include) DEBUG OBJECTEXTEND PRINT(.\main
+                    -.lst) OBJECT(main.obj)
+
+line level    source
+
+   1          #include "global.h" 
+   2          
+   3          void AppStart(void)
+   4          { 
+   5   1              AppInit(); 
+   6   1              APP_START
+   7   1              {
+   8   2                      KeypadCheck();
+   9   2                      
+  10   2              }
+  11   1      }
+  12          
+  13          void AppInit()
+  14          {
+  15   1              //Keypad Related Initialisation 
+  16   1              System.AppStruct.KeyStruct.enKeyVal                     = NOKEY;        
+  17   1              System.AppStruct.KeyStruct.bitNumLock           = UNLOCKED;
+  18   1              //----------------------------  
+  19   1      
+  20   1      
+  21   1      }
+  22          
+  23          void KeypadCheck()
+  24          {
+  25   1              TagenKeyType curKey;
+  26   1      
+  27   1              curKey = KeyScan();
+  28   1      
+  29   1              if(System.AppStruct.KeyStruct.bitNumLock EQ UNLOCKED)
+  30   1              {       
+  31   2                      if( ( (curKey GTE ONE) AND (curKey LTE NINE) ) OR (curKey EQ ZERO) )
+  32   2                      {
+  33   3                              //number Pressed
+  34   3                      }
+  35   2                      else if( curKey EQ ENTER )
+  36   2                      {
+  37   3                      }
+  38   2                      else if( curKey EQ CALLALL)
+  39   2                      {
+  40   3                      }
+  41   2      
+  42   2              }
+  43   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     24    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       1
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+C51 COMPILER V8.05a   MAIN                                                                 08/28/2013 22:34:30 PAGE 2   
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

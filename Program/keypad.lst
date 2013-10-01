@@ -1,0 +1,108 @@
+C51 COMPILER V8.05a   KEYPAD                                                               09/22/2013 14:06:16 PAGE 1   
+
+
+C51 COMPILER V8.05a, COMPILATION OF MODULE KEYPAD
+OBJECT MODULE PLACED IN keypad.obj
+COMPILER INVOKED BY: D:\Keil\C51\BIN\C51.EXE board\src\keypad.c BROWSE INCDIR(.\include) DEBUG OBJECTEXTEND PRINT(.\keyp
+                    -ad.lst) OBJECT(keypad.obj)
+
+line level    source
+
+   1          #include "global.h"
+   2          
+   3          //----------------------------------------------------
+   4          //4 x 3 Keypad
+   5          //------------------------------------------------------
+   6          
+   7          TagenKeyType ucmKeyPad[4][3] = {
+   8                                                                           ///   P1.3   // P1.2 // P1.1 //////// 
+   9                                                                          ///     ||   //  ||  //  ||  ////////   
+  10                                                                          /////////////////////////////////////
+  11                                                  /* P1.4 */      /**/    ONE   ,  TWO  , THREE , /**/
+  12                                                  /* P1.5 */      /**/    FOUR  , FIVE  , SIX   , /**/
+  13                                                  /* P1.6 */      /**/    SEVEN , EIGHT , NINE  , /**/
+  14                                                  /* P1.7 */      /**/    ENTER , ZERO  , CALLALL /**/
+  15                                                                          ////////////////////////////////////
+  16                                                                  };
+  17          //-----------------------------------------------
+  18          void KeypadInit()
+  19          {                   
+  20   1              System.KeyStruct.ucmRowNo = 0;
+  21   1      }
+  22          
+  23          TagenKeyType KeyScan()
+  24          {
+  25   1              TagenKeyType enCurrKey; 
+  26   1      
+  27   1              if(ACCEPT_SW EQ KEY_PRESS)
+  28   1              {
+  29   2                      return ACCEPT;
+  30   2              }
+  31   1      
+  32   1              switch(System.KeyStruct.ucmRowNo)
+  33   1              {
+  34   2                      case 0:
+  35   2                              ROW1 = 0; 
+  36   2                              break;
+  37   2      
+  38   2                      case 1:
+  39   2                              ROW2 = 0;
+  40   2                              break;
+  41   2      
+  42   2                      case 2:
+  43   2                              ROW3= 0;
+  44   2                              break;
+  45   2      
+  46   2                      case 3:
+  47   2                              ROW4 = 0;
+  48   2                              break;
+  49   2      
+  50   2                      default:
+  51   2                              return NOKEY;
+  52   2                              break;
+  53   2              }               
+  54   1              if(COL1 EQ KEY_PRESS)
+C51 COMPILER V8.05a   KEYPAD                                                               09/22/2013 14:06:16 PAGE 2   
+
+  55   1              {
+  56   2                      while(COL1 EQ KEY_PRESS);
+  57   2                      enCurrKey =  ucmKeyPad[System.KeyStruct.ucmRowNo][0];
+  58   2              }
+  59   1              else if(COL2 EQ KEY_PRESS)
+  60   1              {
+  61   2                      while(COL2 EQ KEY_PRESS);
+  62   2                      enCurrKey =  ucmKeyPad[System.KeyStruct.ucmRowNo][1];
+  63   2              }
+  64   1              else if(COL3 EQ KEY_PRESS)
+  65   1              {
+  66   2                      while(COL3 EQ KEY_PRESS);
+  67   2                      enCurrKey =  ucmKeyPad[System.KeyStruct.ucmRowNo][2];
+  68   2              }
+  69   1              else
+  70   1              {
+  71   2                      //while(COL1 EQ KEY_PRESS);
+  72   2                      enCurrKey =  NOKEY;
+  73   2              }
+  74   1              KEYPAD = 0xFF;
+  75   1              System.KeyStruct.ucmRowNo++;
+  76   1              if(System.KeyStruct.ucmRowNo >= ROW_MAX)
+  77   1              {
+  78   2                      System.KeyStruct.ucmRowNo = 0;
+  79   2              }
+  80   1              
+  81   1              return enCurrKey;
+  82   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    115    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     12    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

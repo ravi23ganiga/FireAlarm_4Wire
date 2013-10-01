@@ -1,0 +1,107 @@
+C51 COMPILER V8.05a   SERIAL                                                               09/22/2013 14:06:16 PAGE 1   
+
+
+C51 COMPILER V8.05a, COMPILATION OF MODULE SERIAL
+OBJECT MODULE PLACED IN serial.obj
+COMPILER INVOKED BY: D:\Keil\C51\BIN\C51.EXE board\src\serial.c BROWSE INCDIR(.\include) DEBUG OBJECTEXTEND PRINT(.\seri
+                    -al.lst) OBJECT(serial.obj)
+
+line level    source
+
+   1          #include "global.h"
+   2          
+   3          void SerialInit()
+   4          {
+   5   1              TR1             = TRUE; 
+   6   1              SCON            = 0xD0; 
+   7   1              REN             = FALSE;
+   8   1              MAX485_TX       = TRANSMIT;
+   9   1              System.Serial.enRxStatus = RX_NOT_STARTED;
+  10   1      }
+  11          
+  12          void SendData(UC *ucpData, UC ucmLength)//, TagFnTxFunc fnTxFunc, void* vTxData)
+  13          {
+  14   1              UC ucmData;
+  15   1              MAX485_TX       = TRANSMIT;
+  16   1              System.Serial.enTxComplete      = SENDING;
+  17   1              //System.Serial.fnTxFunc                = fnTxFunc;
+  18   1              //System.Serial.vTxData                 = vTxData;
+  19   1              System.Serial.ucpDataPtr        = ucpData;
+  20   1              System.Serial.ucmTxLength       = ucmLength - 1;
+  21   1              ucmData = *(System.Serial.ucpDataPtr); 
+  22   1              System.Serial.ucpDataPtr++;
+  23   1              if(TI EQ TRUE)
+  24   1              {
+  25   2                      TI = FALSE;
+  26   2              }
+  27   1              SBUF = ucmData; 
+  28   1      } 
+  29          
+  30          void RecData(UC *ucpData, UC ucmDataLength, UC ucmTimeout)//, TagFnRxFunc fnRxFunc, void* vRxData , UC ucm
+             -RxContinuous)
+  31          {           
+  32   1              MAX485_TX       = RECEIVE; 
+  33   1              System.Serial.ucpRxBuff         = ucpData;
+  34   1              System.Serial.ucmRxLength       = ucmDataLength;
+  35   1              System.Serial.ucmRxNdx          = 0;    
+  36   1              //System.Serial.fnRxFunc                = fnRxFunc;
+  37   1              //System.Serial.vRxData                 = vRxData;
+  38   1              System.Serial.usmRxWaitTimeout = ucmTimeout;// * 1000;
+  39   1              if(RI EQ TRUE)
+  40   1              {
+  41   2                      RI = FALSE;
+  42   2              }
+  43   1      //      System.Serial.bitRxContinuous = ucmRxContinuous;
+  44   1              System.Serial.enRxStatus = RX_MONITORING;
+  45   1              REN = TRUE;
+  46   1      }
+  47          
+  48          void SendAddress()
+  49          {                   
+  50   1              TB8 = TRUE; 
+  51   1              SendData(&System.Serial.ucmQueryAddress,sizeof(UC));//,0, 0);
+  52   1      }
+  53          
+C51 COMPILER V8.05a   SERIAL                                                               09/22/2013 14:06:16 PAGE 2   
+
+  54          void SendQuery()
+  55          {                                   
+  56   1              SendAddress();
+  57   1              while(System.Serial.enTxComplete NEQ COMPLETE);
+  58   1              Delay(200);
+  59   1              TB8 = FALSE;
+  60   1              System.QueryStruct.ucmStartByte = 0xA5;
+  61   1              System.QueryStruct.ucmEndByte   = 0x5A;
+  62   1              SendData(&System.QueryStruct.ucmStartByte,sizeof(System.QueryStruct));//, 0, 0);
+  63   1      }
+  64          
+  65          void ReceiveResponse()
+  66          { 
+  67   1              RecData(&System.QueryStruct.ucmStartByte,sizeof(System.QueryStruct), RESPONSE_TIMEOUT);
+  68   1      }
+  69          
+  70          /*
+  71          void QuerySendFinished(void* vData)
+  72          { 
+  73                  return;
+  74          }
+  75          
+  76          void QueryReceiveFinished(void* vData, TagenRxStatus enRxStatus)
+  77          {
+  78                  return;
+  79          }
+  80            */
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    141    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       5
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
