@@ -1,4 +1,4 @@
-C51 COMPILER V8.05a   SERIAL                                                               09/22/2013 14:06:16 PAGE 1   
+C51 COMPILER V8.05a   SERIAL                                                               09/23/2013 22:14:29 PAGE 1   
 
 
 C51 COMPILER V8.05a, COMPILATION OF MODULE SERIAL
@@ -62,7 +62,7 @@ line level    source
   51   1              SendData(&System.Serial.ucmQueryAddress,sizeof(UC));//,0, 0);
   52   1      }
   53          
-C51 COMPILER V8.05a   SERIAL                                                               09/22/2013 14:06:16 PAGE 2   
+C51 COMPILER V8.05a   SERIAL                                                               09/23/2013 22:14:29 PAGE 2   
 
   54          void SendQuery()
   55          {                                   

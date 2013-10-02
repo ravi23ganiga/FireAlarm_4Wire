@@ -3,6 +3,7 @@
 "serial.obj",
 "System.obj",
 "app.obj",
-"keypad.obj" 
+"keypad.obj",
+"7segdisp.obj" 
 TO "Firealarm" 
 RAMSIZE(256) 

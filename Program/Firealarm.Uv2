@@ -11,6 +11,7 @@ File 1,1,<.\board\src\serial.c><serial.c> 0x0
 File 1,1,<.\board\src\System.c><System.c> 0x0 
 File 1,1,<.\application\app.c><app.c> 0x0 
 File 1,1,<.\board\src\keypad.c><keypad.c> 0x0 
+File 1,1,<.\board\src\7segdisp.c><7segdisp.c> 0x0 
 
 
 Options 1,0,0  // Target 'Target 1'

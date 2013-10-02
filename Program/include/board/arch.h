@@ -3,17 +3,18 @@
 //All Port and hardware related declaration
 
 //7 Segment Display related variables
-sfr DISP 			= 0xA0;
+sfr DISP1			= 0x80;
+sfr DISP2 			= 0xA0;
 
 //LED related variables
 
-sbit FIRE_LED 		=  P3^2;
+sbit MAX485_TX		= P3^2;
 
 sbit FIRE_RELAY 	= P3^3;	
  
 sbit SYSTEM_START 	= P3^4;
 
-sbit MAX485_TX		= P3^5;
+sbit FIRE_LED 		=  P3^5; 
 
 //All switch related variables
 

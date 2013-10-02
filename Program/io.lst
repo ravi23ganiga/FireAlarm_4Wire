@@ -1,4 +1,4 @@
-C51 COMPILER V8.05a   IO                                                                   09/22/2013 14:06:16 PAGE 1   
+C51 COMPILER V8.05a   IO                                                                   09/23/2013 22:14:29 PAGE 1   
 
 
 C51 COMPILER V8.05a, COMPILATION OF MODULE IO
@@ -18,7 +18,7 @@ line level    source
    8   1              MAX485_TX               = OUTPUT_PIN; 
    9   1      
   10   1              KEYPAD                  = INPUT_PORT;
-  11   1              ACCEPT_SW               = INPUT_PIN;
+  11   1              ACCEPT_SW               = INPUT_PIN;                
   12   1      }
 
 

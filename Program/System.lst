@@ -1,4 +1,4 @@
-C51 COMPILER V8.05a   SYSTEM                                                               09/22/2013 14:06:16 PAGE 1   
+C51 COMPILER V8.05a   SYSTEM                                                               09/23/2013 22:14:29 PAGE 1   
 
 
 C51 COMPILER V8.05a, COMPILATION OF MODULE SYSTEM
@@ -24,7 +24,7 @@ line level    source
   14   1              InterruptInit();
   15   1              IoInit();
   16   1              SerialInit();
-  17   1      //      DispInit();
+  17   1              DispInit();
   18   1              KeypadInit(); 
   19   1              msecInterruptStart();
   20   1      }
@@ -38,11 +38,11 @@ line level    source
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =     39    ----
+   CODE SIZE        =     42    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =     36    ----
+   DATA SIZE        =     58    ----
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.

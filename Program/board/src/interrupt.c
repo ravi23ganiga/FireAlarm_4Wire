@@ -69,6 +69,7 @@ void TimerInterrupt() interrupt 1
 {
 	TR0 = FALSE;
 	//1msec timer interrupt
+ 
 	if(System.AppStruct.usmDelay GT 0)
 	{
 		System.AppStruct.usmDelay--;

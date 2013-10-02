@@ -41,7 +41,7 @@ void QuerySelect();
 void QuerySend();
 void ResponseCheck();
 void SystemDecision();
-void UpdateSystem(UC ucmUpdateType);
+void UpdateSystem(UC ucmUpdateType,UC ucmFloorNo);
 void ResetSystem();
 void StartRegistration();
 void RegisterFloor(UC ucmFloorNo);

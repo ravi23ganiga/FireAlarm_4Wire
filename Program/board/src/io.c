@@ -8,5 +8,5 @@ void IoInit()
 	MAX485_TX		= OUTPUT_PIN; 
 
 	KEYPAD 			= INPUT_PORT;
-	ACCEPT_SW 		= INPUT_PIN;
+	ACCEPT_SW 		= INPUT_PIN;		    
 }

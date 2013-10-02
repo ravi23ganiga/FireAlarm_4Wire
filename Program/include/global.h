@@ -6,7 +6,7 @@
 #include "app/typedef.h"
 
 #include "board/arch.h" 
-//#include "board/7segdisp.h"
+#include "board/7segdisp.h"
 #include "board/serial.h"
 #include "board/interrupt.h"
 #include "board/io.h"
@@ -37,7 +37,7 @@
 //Global System Structure
 typedef struct
 {
-//	TagSegDisp 		SegDisp;
+	TagSegDisp 		SegDisp;
 	TagSerial		Serial;
 	TagQueryStruct	QueryStruct;
 	TagQueryStruct	ResponseStruct;
@@ -46,6 +46,7 @@ typedef struct
 }TagSystem;
 
 extern TagSystem System;
+extern US usmTest;
 
 void SystemBoot();
 void Delay(US usmDelay);

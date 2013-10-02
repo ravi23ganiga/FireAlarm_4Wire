@@ -10,6 +10,7 @@
 /*
 	Pendingwork	  
 */
+			   
 
 void AppStart(void)
 { 
@@ -33,20 +34,19 @@ void AppInit()
 
 void ResetSystem()
 {
-	Delay(1000);		  //#chk test the timing due to heavy delay
+	Delay(1000);		  
 	System.Serial.ucmQueryAddress 	= BROADCAST_ADDR;
 	System.QueryStruct.ucmQueryType = RESET_QUERY; 
 	SendQuery();
 	while(System.Serial.enTxComplete NEQ COMPLETE);
-	Delay(100);			  //#chk test the timing
+	Delay(100);			  
 }
 
 //Registration of the floor
 //-------------------------
 
 
-//............................
-//#chk pend:	Consider the delay of this routine
+//............................  
 //#chk pend:	Validate the received response	
 //............................
 void StartRegistration()
@@ -132,7 +132,7 @@ UC NextRegisteredFloor(UC ucmFloorNo)
 
 /*
   Pending works
-  #chk pend: 1. Clear all implementation 
+  
 */
 
 void KeypadCheck()
@@ -166,8 +166,8 @@ void KeypadCheck()
 					if(ucmRetVal EQ TRUE)
 					{  
 						System.QueryStruct.ucmQueryType 		= FIRE_QUERY;
-						System.Serial.ucmQueryAddress 			= System.AppStruct.KeyStruct.ucmKeyValue; 
-						UpdateSystem(FIRE_UPDATE);
+						System.Serial.ucmQueryAddress 			= System.AppStruct.KeyStruct.ucmKeyValue;  
+						UpdateSystem(FIRE_UPDATE,System.Serial.ucmQueryAddress);
 						System.AppStruct.KeyStruct.bitNumLock   = LOCKED;
 					} 
 				} 
@@ -179,22 +179,22 @@ void KeypadCheck()
 				System.QueryStruct.ucmQueryType 			= CALL_ALL_QUERY;
 				System.Serial.ucmQueryAddress 				= BROADCAST_ADDR;
 				System.AppStruct.KeyStruct.bitNumLock	   	= LOCKED; 
-				UpdateSystem(FIRE_UPDATE);
+				UpdateSystem(FIRE_UPDATE,System.Serial.ucmQueryAddress);
 				System.AppStruct.KeyStruct.ucmKeyCounter 	= 0;
 				System.AppStruct.KeyStruct.ucmKeyValue 		= 0;
 			}
 	
 			else if(curKey EQ ACCEPT)
 			{
-				//#chk accept not to be done for broadcast addr 				
+				
 				System.QueryStruct.ucmQueryType 			= ACCEPT_QUERY; 
 				System.Serial.ucmQueryAddress 				= System.AppStruct.KeyStruct.ucmKeyValue;				    
 				System.AppStruct.KeyStruct.bitNumLock	   	= LOCKED; 
-				UpdateSystem(ACCEPT_UPDATE);
+				UpdateSystem(ACCEPT_UPDATE,System.Serial.ucmQueryAddress);
 				System.AppStruct.KeyStruct.ucmKeyCounter 	= 0;
 				System.AppStruct.KeyStruct.ucmKeyValue 		= 0;
 			} 
-			//clear button
+			
 		}
 	}
 }
@@ -258,7 +258,7 @@ void ResponseCheck()
 			System.AppStruct.bitResponseSemaphore = UNLOCKED;
 			if(System.ResponseStruct.ucmQueryData EQ FIRE_RESPONSE)
 			{   
-				UpdateSystem(FIRE_UPDATE);
+				UpdateSystem(FIRE_UPDATE,System.AppStruct.ucmCurAddress);
 			}
 		}
 		else if( System.Serial.enRxStatus EQ RX_TIMEOUT)
@@ -271,10 +271,15 @@ void ResponseCheck()
 
 //........................................................
 //........................................................ 
-void UpdateSystem(UC ucmUpdateType)
+void UpdateSystem(UC ucmUpdateType, UC ucmFloorNo)
 {
+	UC ucmRetVal;
 	if(ucmUpdateType EQ FIRE_UPDATE)
 	{
+		ucmRetVal = (ucmFloorNo / 10);
+		SegDisp1(ucmRetVal);
+		ucmRetVal = (ucmFloorNo % 10);
+		SegDisp2(ucmRetVal);
 		FIRE_LED 	= TRUE;
 		FIRE_RELAY	= TRUE;		
 	}

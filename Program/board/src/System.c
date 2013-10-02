@@ -14,7 +14,7 @@ void SystemBoot()
 	InterruptInit();
 	IoInit();
 	SerialInit();
-//	DispInit();
+	DispInit();
 	KeypadInit(); 
 	msecInterruptStart();
 }

@@ -1,4 +1,4 @@
-C51 COMPILER V8.05a   INTERRUPT                                                            09/22/2013 14:06:16 PAGE 1   
+C51 COMPILER V8.05a   INTERRUPT                                                            09/23/2013 22:14:28 PAGE 1   
 
 
 C51 COMPILER V8.05a, COMPILATION OF MODULE INTERRUPT
@@ -62,7 +62,7 @@ line level    source
   52   2                      if( ( System.Serial.enRxStatus EQ RX_MONITORING ) OR ( System.Serial.enRxStatus EQ RX_STARTED ) )
   53   2                      {
   54   3                              System.Serial.usmRxTimeout = RECEPTION_TIMEOUT;
-C51 COMPILER V8.05a   INTERRUPT                                                            09/22/2013 14:06:16 PAGE 2   
+C51 COMPILER V8.05a   INTERRUPT                                                            09/23/2013 22:14:28 PAGE 2   
 
   55   3                              System.Serial.enRxStatus = RX_STARTED;
   56   3                              
@@ -81,62 +81,63 @@ line level    source
   69          {
   70   1              TR0 = FALSE;
   71   1              //1msec timer interrupt
-  72   1              if(System.AppStruct.usmDelay GT 0)
-  73   1              {
-  74   2                      System.AppStruct.usmDelay--;
-  75   2              }
-  76   1              //----------------------
-  77   1               //Serial Reception Status
-  78   1               if(System.Serial.enRxStatus EQ RX_STARTED)
-  79   1               {
-  80   2                         if(System.Serial.usmRxTimeout NEQ 0)
-  81   2                         {
-  82   3                                      System.Serial.usmRxTimeout--;
-  83   3                                      if(System.Serial.usmRxTimeout EQ 0)
-  84   3                                      {
-  85   4                                              System.Serial.enRxStatus = RX_COMPLETED;
-  86   4                                              REN = FALSE;
-  87   4                                              //call routine
-  88   4                              //              if(System.Serial.fnRxFunc NEQ NULL)
-  89   4                              //              {
-  90   4                              //                      System.Serial.fnRxFunc(System.Serial.vRxData,RX_COMPLETED);
-  91   4                              //              }
-  92   4      //                                      if(System.Serial.bitRxContinuous EQ TRUE)
-  93   4      //                                      {
-  94   4                              //                      REN = TRUE;
-  95   4      //                                      }
-  96   4                                      }
-  97   3                         }
-  98   2                }
-  99   1      
- 100   1                if(System.Serial.enRxStatus EQ RX_MONITORING)
- 101   1                {
- 102   2                      if(System.Serial.usmRxWaitTimeout NEQ 0)
- 103   2                      {
- 104   3                              System.Serial.usmRxWaitTimeout--;
- 105   3                              if(System.Serial.usmRxWaitTimeout EQ 0)
- 106   3                              {
- 107   4                                      System.Serial.enRxStatus = RX_TIMEOUT;
- 108   4                                      REN = FALSE;
- 109   4                                      //if(System.Serial.fnRxFunc NEQ NULL)
- 110   4                                      //{
- 111   4                                      //      System.Serial.fnRxFunc(System.Serial.vRxData,RX_TIMEOUT);
- 112   4                                      //}
- 113   4      //                              if(System.Serial.bitRxContinuous EQ TRUE)
- 114   4      //                              {
- 115   4      //                                      REN = TRUE;
- 116   4      //                              }
-C51 COMPILER V8.05a   INTERRUPT                                                            09/22/2013 14:06:16 PAGE 3   
+  72   1       
+  73   1              if(System.AppStruct.usmDelay GT 0)
+  74   1              {
+  75   2                      System.AppStruct.usmDelay--;
+  76   2              }
+  77   1              //----------------------
+  78   1               //Serial Reception Status
+  79   1               if(System.Serial.enRxStatus EQ RX_STARTED)
+  80   1               {
+  81   2                         if(System.Serial.usmRxTimeout NEQ 0)
+  82   2                         {
+  83   3                                      System.Serial.usmRxTimeout--;
+  84   3                                      if(System.Serial.usmRxTimeout EQ 0)
+  85   3                                      {
+  86   4                                              System.Serial.enRxStatus = RX_COMPLETED;
+  87   4                                              REN = FALSE;
+  88   4                                              //call routine
+  89   4                              //              if(System.Serial.fnRxFunc NEQ NULL)
+  90   4                              //              {
+  91   4                              //                      System.Serial.fnRxFunc(System.Serial.vRxData,RX_COMPLETED);
+  92   4                              //              }
+  93   4      //                                      if(System.Serial.bitRxContinuous EQ TRUE)
+  94   4      //                                      {
+  95   4                              //                      REN = TRUE;
+  96   4      //                                      }
+  97   4                                      }
+  98   3                         }
+  99   2                }
+ 100   1      
+ 101   1                if(System.Serial.enRxStatus EQ RX_MONITORING)
+ 102   1                {
+ 103   2                      if(System.Serial.usmRxWaitTimeout NEQ 0)
+ 104   2                      {
+ 105   3                              System.Serial.usmRxWaitTimeout--;
+ 106   3                              if(System.Serial.usmRxWaitTimeout EQ 0)
+ 107   3                              {
+ 108   4                                      System.Serial.enRxStatus = RX_TIMEOUT;
+ 109   4                                      REN = FALSE;
+ 110   4                                      //if(System.Serial.fnRxFunc NEQ NULL)
+ 111   4                                      //{
+ 112   4                                      //      System.Serial.fnRxFunc(System.Serial.vRxData,RX_TIMEOUT);
+ 113   4                                      //}
+ 114   4      //                              if(System.Serial.bitRxContinuous EQ TRUE)
+ 115   4      //                              {
+ 116   4      //                                      REN = TRUE;
+C51 COMPILER V8.05a   INTERRUPT                                                            09/23/2013 22:14:28 PAGE 3   
 
- 117   4                              }
- 118   3                      }
- 119   2                }
- 120   1               //-----------------------
- 121   1              //-----------------------
- 122   1              TH0 = 0xFC;
- 123   1              TL0 = 0x66;
- 124   1              TR0 = TRUE;
- 125   1      }
+ 117   4      //                              }
+ 118   4                              }
+ 119   3                      }
+ 120   2                }
+ 121   1               //-----------------------
+ 122   1              //-----------------------
+ 123   1              TH0 = 0xFC;
+ 124   1              TL0 = 0x66;
+ 125   1              TR0 = TRUE;
+ 126   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE

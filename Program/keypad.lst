@@ -1,4 +1,4 @@
-C51 COMPILER V8.05a   KEYPAD                                                               09/22/2013 14:06:16 PAGE 1   
+C51 COMPILER V8.05a   KEYPAD                                                               09/23/2013 22:14:29 PAGE 1   
 
 
 C51 COMPILER V8.05a, COMPILATION OF MODULE KEYPAD
@@ -62,7 +62,7 @@ line level    source
   52   2                              break;
   53   2              }               
   54   1              if(COL1 EQ KEY_PRESS)
-C51 COMPILER V8.05a   KEYPAD                                                               09/22/2013 14:06:16 PAGE 2   
+C51 COMPILER V8.05a   KEYPAD                                                               09/23/2013 22:14:29 PAGE 2   
 
   55   1              {
   56   2                      while(COL1 EQ KEY_PRESS);
